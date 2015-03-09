@@ -1,0 +1,15 @@
+﻿Build started 09/03/2015 09:36:32 PM.
+     1>Project "C:\Users\Jake\Documents\Visual Studio 2013\Projects\WindowsOptimisedBenchmark\WindowsOptimisedBenchmark\WindowsOptimisedBenchmark.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Intel\Composer XE 2015\bin\ia32\icl.exe /c /Qvc12 /Qlocation,link,"C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin" /ZI /nologo /W3 /Od /Qftz- /D __INTEL_COMPILER=1500 /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /EHsc /RTC1 /MDd /GS /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\WindowsOptimisedBenchmark.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP WindowsOptimisedBenchmark.cpp
+         WindowsOptimisedBenchmark.cpp
+       Link:
+         C:\Program Files (x86)\Intel\Composer XE 2015\bin\ia32\xilink.exe /OUT:"C:\Users\Jake\Documents\Visual Studio 2013\Projects\WindowsOptimisedBenchmark\Debug\WindowsOptimisedBenchmark.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Users\Jake\Documents\Visual Studio 2013\Projects\WindowsOptimisedBenchmark\Debug\WindowsOptimisedBenchmark.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Jake\Documents\Visual Studio 2013\Projects\WindowsOptimisedBenchmark\Debug\WindowsOptimisedBenchmark.lib" /MACHINE:X86 Debug\stdafx.obj
+         Debug\WindowsOptimisedBenchmark.obj
+         ..\..\..\..\..\..\..\SDK\Glut\glut32.lib
+         xilink: executing 'link'
+     1>Done Building Project "C:\Users\Jake\Documents\Visual Studio 2013\Projects\WindowsOptimisedBenchmark\WindowsOptimisedBenchmark\WindowsOptimisedBenchmark.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.41
