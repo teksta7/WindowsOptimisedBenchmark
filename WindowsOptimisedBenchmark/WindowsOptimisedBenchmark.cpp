@@ -5,7 +5,6 @@
 #pragma once
 #define _USE_MATH_DEFINES
 #include <math.h>
-
 #include <string>
 #include <iostream>
 #include <ctime>
@@ -26,6 +25,21 @@
 #include <C:\SDK\glm\gtx\euler_angles.hpp>
 #include <C:\SDK\glm\gtx\norm.hpp>
 
+#include "Emitter.h"
+#include "Particle.h"
+#include "ParticleData.h"
+#include "Sphere.h"
+#include "Camera1.h"
+
+Camera1 Benchmark;
+Sphere Particles;
+ParticleData Particle_Count(1000);
+
+glm::vec3 DefaultCAMpos(0, 0, 100);
+glm::vec3 DefaultCAMrot(40, 0, 0);
+glm::vec3 DefaultCAMpiv(0, 0, 0);
+
+
 using namespace std;
 
 //Track mouse inputs
@@ -39,6 +53,15 @@ const int Window_H = 600;
 //Will be used to create the window
 int GLUTWINDOW;
 
+int fps = 0;
+int framerate;
+int previous;
+
+float Time = 0.01;
+float PreviousTime = 0;
+float timestep = 0.33333f;
+
+bool update = true;
 //Location Postion of mouse
 glm::vec2 Mouse_CurrentLOC = glm::vec2(0);
 glm::vec2(Mouse_PreviousLOC) = glm::vec2(0);
@@ -60,25 +83,27 @@ void Axis(glm::vec3 Move = glm::vec3(0))
 	glPushMatrix();
 	glTranslatef(Move.x, Move.y, Move.z);
 	//glScalef(Scale, Scale, Scale);
-	glColor3f(0.0f, 0.0f, 1.0f);
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-	glBegin(GL_LINES);
-	{
-		glColor3f(1.0f, 0.0f, 0.0f);
-		glVertex3f(0.0f, 0.0f, 0.0);
-		glVertex3f(1.0f, 0.0f, 0.0f);
+	//glutWireCube(20);
 
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(0.0f, 1.0f, 0.0f);
+	//glBegin(GL_LINES);
+	//{
+		///glColor3f(1.0f, 0.0f, 0.0f);
+		//glVertex3f(0.0f, 0.0f, 0.0);
+		//glVertex3f(1.0f, 0.0f, 0.0f);
 
-		glColor3f(0.0f, 0.0f, 1.0f);
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(0.0f, 0.0f, 1.0f);
+		//glColor3f(0.0f, 1.0f, 0.0f);
+		//glVertex3f(0.0f, 0.0f, 0.0f);
+		//glVertex3f(0.0f, 1.0f, 0.0f);
+
+		//glColor3f(0.0f, 0.0f, 1.0f);
+		//glVertex3f(0.0f, 0.0f, 0.0f);
+		//glVertex3f(0.0f, 0.0f, 1.0f);
 
 
-	}
-	glEnd();
+	//}
+	//glEnd();
 
 	glPopMatrix();
 	glPopAttrib();
@@ -87,21 +112,83 @@ void Axis(glm::vec3 Move = glm::vec3(0))
 void Display()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW_MATRIX);
+	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	Benchmark.transformVIEW();
 
-	//Axis(PivotCAM);
+	//glLoadIdentity();
+	// Set the camera
+	//gluLookAt(0, 0, 1, 0, 0, 0, 0, 1, 0);
+	Axis(PivotCAM);
 
+	Particle_Count.RenderFrame();
+	//std::cout << "Done";
 
 	glutSwapBuffers();
 	glutPostRedisplay();
 
 }
 
+void FPS()
+{
+	//  Increase frame count
+	++fps;
+
+	//  Get the number of milliseconds since glutInit called
+	//  (or first call to glutGet(GLUT ELAPSED TIME)).
+	int current = glutGet(GLUT_ELAPSED_TIME);
+
+	//  Calculate time passed
+	int timeInterval = current - previous;
+
+	if (timeInterval > 1000)
+	{
+		//  calculate the number of frames per second
+		framerate = fps / (timeInterval / 1000.0f);
+
+		//  Set time
+		previous = current;
+
+		//  Reset frame count
+		fps = 0;
+	}
+	cout << "FPS::" << framerate << endl;
+}
+
+float timer()
+{
+	float fCurrentTime = std::clock() / (float)CLOCKS_PER_SEC;
+	float fDeltaTime = fCurrentTime - PreviousTime;
+	PreviousTime = fCurrentTime;
+
+	// Clamp to the max time step
+	fDeltaTime = std::fmin(fDeltaTime, timestep);
+
+	return fDeltaTime;
+}
+
+
+
 void Idle()
 {
+	//Time = timer();
+	//Time = 0.0003 + Time;
+	//cout << Time;
+	if (update)
+	{
+		Particle_Count.UpdateFrame(Time);
+		 
+	}
+	else
+	{
+		Particle_Count.CreateVertexBUFFER();
+	}
+	
+	
+	FPS();
 	glutPostRedisplay();
+	
 
 }
 
@@ -117,6 +204,11 @@ void Motion(int X, int Y)
 
 void Reshape(int width, int height)
 {
+	Benchmark.CreateViewport(0, 0, width, height);
+	Benchmark.CHANGEviewport();
+
+	Benchmark.CreateProjection(60.f, width / (float)height, 0.1f, 1000.0f);
+	Benchmark.CHANGEprojection();
 	glutPostRedisplay();
 
 }
@@ -159,6 +251,22 @@ void Initialise(int argc, char* argv[])
 int main(int argc, char* argv[])
 {
 	Initialise(argc,argv);
+	Benchmark.newTRANSLATE(DefaultCAMpos);
+	Benchmark.updateROTATION(DefaultCAMrot);
+	Benchmark.ApplyPIVOT(DefaultCAMpiv);
+	
+	//Particle_Count.EmitterSpawn(&Particles);
+	//for (unsigned int i = 0; i < Particle_Count.ParticleBUFFER.size(); ++i)
+	//{
+	//	Particle_Count.ParticleSpawn(Particle_Count.ParticleBUFFER[i]);
+	//}
+	Particle_Count.CameraSetup(&Benchmark);
+	Particle_Count.EmitterSpawn(&Particles);
+	Particle_Count.ParticleSpawn();
+	//Particle_Count.CameraSetup(Benchmark);
+	//Particle_Count.ParticleSpawn(&Particles);
+	//Particle_Count.EmitterSpawn;
+
 	glutMainLoop();
 
 	
